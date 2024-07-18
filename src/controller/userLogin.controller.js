@@ -1,80 +1,57 @@
-import bycrypt from 'bcryptjs';
-import User from '../models/user.model.js';
 import generateTokenSetCookie from "../utils/generateToken.js";
-
-// ------------User sign up---------- ✅
-export const signUpUser = async (req, res) => {
-    try {
-        const {name, username, password } = req.body;
-        const user = await User.findOne({  username });
-
-        if (user) {
-            return res.status(400).json({success:false, error: "User Already Exists" });
-        }
-
-        //Hashing the password
-        const salt = await bycrypt.genSalt(10);
-        const hashpassword = await bycrypt.hash(password, salt);
-
-        const newUser = new User({
-            name,
-            password: hashpassword,
-            username
-        })
-
-        if (newUser) {
-            //Generate JWT tokens
-            generateTokenSetCookie(newUser._id, res);
-            await newUser.save();
-            console.log("New User Created")
-            res.status(201).json({
-                success:true,
-                name: newUser.name,
-                ID: username
-            })
-        }
-        else {
-            res.status(400).json({success:false, message: "Invalid user data" });
-        }
-
-    } catch (error) {
-        console.log("Error in SignUp controller", error.message);
-        res.status(500).json({success:false, message: error.message })
-    }
-}
+import  {getUserModelForBatch}  from '../models/user.model.js'; // Adjust the path as per your project structure
 
 // ------------User Login---------- ✅
+import bcrypt from 'bcryptjs';
+
 export const logInUser = async (req, res) => {
     try {
         const { username, password } = req.body;
-        const user = await User.findOne({ username });
-        const ispasswordCorrect = await bycrypt.compare(password, user?.password || "");
+        // let username = "FSDB101"
 
+        let batchnumber =  username[4];
+
+        // Get the model for the specified batch number
+        const UserModel = getUserModelForBatch(batchnumber);
+
+        // Find the user in the specified collection
+        const user = await UserModel.findOne({ username });
+
+        // Check if user exists
         if (!user) {
             return res.status(400).json({ success: false, message: "Invalid Username" });
         }
 
-        if(!ispasswordCorrect){
+        // Verify password
+        const isPasswordCorrect = await bcrypt.compare(password, user.password);
+
+        if (!isPasswordCorrect) {
             return res.status(400).json({ success: false, message: "Invalid Password" });
         }
 
-        generateTokenSetCookie(user._id, res);
+        // Generate token and set cookie (example function, replace with your own implementation)
+        generateTokenSetCookie(user._id,batchnumber, res);
 
+        // Log success message
         const time = getCurrentDateTime();
+        console.log({ message: "User Logged In", time, name: user.name, ID: username });
 
-        console.log({message:"User Loged In", time: time, user: username});
-        res.status(200).json({ success: true,message:"Login Successful !" , name:user.name, ID: user.username});
+        // Respond with success message and user details
+        res.status(200).json({ success: true, message: "Login Successful!", name: user.name, ID: user.username });
 
     } catch (error) {
         console.log("Error in Login controller", error.message);
         res.status(500).json({ success: false, error: 'Internal Server Error' });
     }
-}
+};
+
 
 // ------------User Logout---------- ✅
 export const logOutUser = (req, res) => {
+    let Data = req; 
     try {
-        console.log("User Log Out");
+        const time = getCurrentDateTime();
+        console.log({ message: "User Logged Out", time, name:Data.user.name,ID: Data.user.username});
         res.cookie("jwt", "", { maxAge: 0 });
         res.status(200).json({ message: "Logged Out Successfully", success: true });
     } catch (error) {

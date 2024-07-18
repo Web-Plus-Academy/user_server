@@ -1,23 +1,30 @@
 import mongoose from "mongoose";
 
 const UserSchema = new mongoose.Schema({
-    name:{
-        type:String,
-        require:true,
-        unique:true
+    name: {
+        type: String,
+        required: true,
+        unique: true
     },
-    username:{
-        type:String,
-        require:true,
-        unique:true
+    username: {
+        type: String,
+        required: true,
+        unique: true
     },
-    password:{
-        type:String,
-        require:true,
+    password: {
+        type: String,
+        required: true,
     },
-    //createdAt, updatedAt
-},{timestamps:true})
+    batchnumber: {
+        type: Number,
+        required: true
+    }
+}, { timestamps: true });
 
-const User = mongoose.model("User",UserSchema);
+// Function to get the model for a specific batch
+const getUserModelForBatch = (batchNumber) => {
+    const collectionName = `users_batch_${batchNumber}`;
+    return mongoose.model(collectionName, UserSchema, collectionName);
+};
 
-export default User;
+export {getUserModelForBatch, UserSchema};

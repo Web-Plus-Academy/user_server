@@ -1,14 +1,14 @@
 import express from 'express';
-import { logInUser, logOutUser, signUpUser } from '../controller/userLogin.controller.js';
-// import UserProtectingRouter from '../middleware/UserProtectingRouter.js';
+import { logInUser, logOutUser } from '../controller/userLogin.controller.js';
+import UserProtectingRouter from '../middleware/user.middleware.js';
 
 const router = express.Router();
 
-router.post('/signupUser', signUpUser);  // ✅
+// router.post('/signupUser', signUpUser);  // ✅
 
 router.post('/loginUser', logInUser);  // ✅
 
-router.get('/logoutUser', logOutUser);  // ✅
+router.get('/logoutUser',UserProtectingRouter, logOutUser);  // ✅
 
 
 
