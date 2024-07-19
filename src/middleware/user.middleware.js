@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { getUserModelForBatch } from "../models/user.model.js"; // Adjust path as per your project structure
+import getUserModelForBatch  from "../models/user.model.js"; // Adjust path as per your project structure
 
 const protectRoute = async (req, res, next) => {
   try {
