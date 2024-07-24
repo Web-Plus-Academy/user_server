@@ -74,16 +74,6 @@ export const incrementPodCount = async (req, res) => {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    // Ensure the POD submission status is only set if it hasn't been set today
-    // const now = new Date();
-    // const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    // const endOfToday = new Date(startOfToday.getTime() + 24 * 60 * 60 * 1000); // End of today
-
-    // if (user.podSubmissionStatus && user.podSubmissionDate >= startOfToday && user.podSubmissionDate < endOfToday) {
-    //   return res.status(400).json({ success: false, message: "POD already submitted today" });
-    // }
-
-    // Increment POD count and update submission status
     user.POD++;
     user.podSubmissionStatus = true;
 
