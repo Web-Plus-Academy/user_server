@@ -1,5 +1,5 @@
 import express from 'express';
-import { logInUser, logOutUser, incrementPodCount } from '../controller/userLogin.controller.js';
+import { logInUser, logOutUser, incrementPodCount, changePassword } from '../controller/userLogin.controller.js';
 // import UserProtectingRouter from '../middleware/user.middleware.js';
 import axios from 'axios'
 import getUserModelForBatch from '../models/user.model.js';
@@ -10,9 +10,11 @@ const router = express.Router();
 
 router.post('/loginUser', logInUser);  // ✅
 
+router.post('/changePassword',changePassword);
+
 router.post('/logoutUser', logOutUser);  // ✅
 
-router.post('/podSubmit', incrementPodCount)
+router.post('/podSubmit', incrementPodCount) //
 
 
 

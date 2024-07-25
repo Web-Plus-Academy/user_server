@@ -61,6 +61,54 @@ export const logOutUser = (req, res) => {
     }
 }
 
+// --------------- Change password ---------------
+export const changePassword = async (req, res) => {
+    try {
+        const { username, oldPassword, newPassword } = req.body;
+
+        console.log(username)
+        let batchnumber = username[4];
+
+        // Get the model for the specified batch number
+        const UserModel = getUserModelForBatch(batchnumber);
+
+        // Find the user in the specified collection
+        const user = await UserModel.findOne({ username });
+
+        // Check if user exists
+        if (!user) {
+            return res.json({ success: false, message: "Invalid Username" });
+        }
+
+        // Verify old password
+        const isOldPasswordCorrect = await bcrypt.compare(oldPassword, user.password);
+
+        if (!isOldPasswordCorrect) {
+            return res.json({ success: false, message: "Invalid Old Password" });
+        }
+
+        // Encrypt the new password
+        const salt = await bcrypt.genSalt(10);
+        const hashedNewPassword = await bcrypt.hash(newPassword, salt);
+
+        // Update user's password
+        user.password = hashedNewPassword;
+        await user.save();
+
+        // Log success message
+        const time = getCurrentDateTime();
+        console.log({ message: "Password Changed Successfully", time, name: user.name, ID: username });
+
+        // Respond with success message
+        res.status(200).json({ success: true, message: "Password Changed Successfully!" });
+
+    } catch (error) {
+        console.log("Error in changePassword controller", error.message);
+        res.status(500).json({ success: false, error: 'Internal Server Error' });
+    }
+};
+
+
 // --------------- POD Submission ----------- 
 
 export const incrementPodCount = async (req, res) => {
@@ -87,7 +135,7 @@ export const incrementPodCount = async (req, res) => {
     // const time = new Date().toISOString(); // Example of current date-time
     // console.log({ message: "POD Submitted", time, name: req.user.name, ID: req.user.username });
 
-    res.status(200).json({ message: "POD Submitted", success: true, podSubmissionStatus : true });
+    res.status(200).json({ message: "POD Submitted", success: true, podSubmissionStatus : user.podSubmissionStatus });
   } catch (error) {
     console.error("Error in POD Submission:", error.message);
     res.status(500).json({ error: "Internal Server error" });
