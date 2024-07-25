@@ -1,6 +1,6 @@
 import express from 'express';
 import { logInUser, logOutUser, incrementPodCount } from '../controller/userLogin.controller.js';
-import UserProtectingRouter from '../middleware/user.middleware.js';
+// import UserProtectingRouter from '../middleware/user.middleware.js';
 import axios from 'axios'
 import getUserModelForBatch from '../models/user.model.js';
 
@@ -10,18 +10,20 @@ const router = express.Router();
 
 router.post('/loginUser', logInUser);  // ✅
 
-router.get('/logoutUser', UserProtectingRouter, logOutUser);  // ✅
+router.post('/logoutUser', logOutUser);  // ✅
 
-router.get('/podSubmit', UserProtectingRouter, incrementPodCount)
+router.post('/podSubmit', incrementPodCount)
 
 
 
 // POD assigner 
-router.get('/problems',UserProtectingRouter, async (req, res) => {
+router.post('/problems', async (req, res) => {
   try {
     const response = await axios.get('https://leetcode.com/api/problems/algorithms/')
-    const { username, batchnumber } = req.user; // Assuming req.user contains user details
-    // console.log(req.user)
+   
+    const username = req.body.id;
+    let batchnumber =  username[4];
+    // console.log(batchnumber)
 
     const UserModel = getUserModelForBatch(batchnumber);
     const user = await UserModel.findOne({ username });

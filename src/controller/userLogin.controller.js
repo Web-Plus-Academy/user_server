@@ -48,11 +48,11 @@ export const logInUser = async (req, res) => {
 
 // ------------User Logout---------- ✅
 export const logOutUser = (req, res) => {
-    let Data = req; 
+    // let Data = req; 
     try {
-        const time = getCurrentDateTime();
-        console.log({ message: "User Logged Out", time, name:Data.user.name,ID: Data.user.username});
-        res.cookie("jwt", "", { maxAge: 0 });
+        // const time = getCurrentDateTime();
+        // console.log({ message: "User Logged Out", time, name:Data.user.name,ID: Data.user.username});
+        // res.cookie("jwt", "", { maxAge: 0 });
         res.status(200).json({ message: "Logged Out Successfully", success: true });
     } catch (error) {
         console.log("Error in Login controller", error.message);
@@ -65,7 +65,11 @@ export const logOutUser = (req, res) => {
 
 export const incrementPodCount = async (req, res) => {
   try {
-    const { username, batchnumber } = req.user; // Assuming req.user contains user details
+    // const { username, batchnumber } = req.user; // Assuming req.user contains user details
+
+    const username = req.body.id;
+    let batchnumber =  username[4];
+    // console.log(batchnumber)
 
     const UserModel = getUserModelForBatch(batchnumber);
     const user = await UserModel.findOne({ username });
@@ -80,8 +84,8 @@ export const incrementPodCount = async (req, res) => {
     await user.save();
 
     console.log('POD count incremented successfully');
-    const time = new Date().toISOString(); // Example of current date-time
-    console.log({ message: "POD Submitted", time, name: req.user.name, ID: req.user.username });
+    // const time = new Date().toISOString(); // Example of current date-time
+    // console.log({ message: "POD Submitted", time, name: req.user.name, ID: req.user.username });
 
     res.status(200).json({ message: "POD Submitted", success: true, podSubmissionStatus : true });
   } catch (error) {
