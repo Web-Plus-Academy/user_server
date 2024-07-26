@@ -11,18 +11,27 @@ const connectToMongoDB = async () => {
   }
 };
 
-// Schedule the cron job to run every day at 21:35
-cron.schedule('0 7 * * *', async () => {
+
+
+// Schedule the cron job to run every minute for testing purposes
+cron.schedule('* * * * *', async () => {
+  console.log("Cron job started");
   try {
     const batchNumbers = [1, 2, 3]; // Replace with your actual batch numbers
     for (const batchNumber of batchNumbers) {
+      console.log(`Processing batch number: ${batchNumber}`);
       const UserModel = getUserModelForBatch(batchNumber);
-      await UserModel.updateMany(
+      if (!UserModel) {
+        console.error(`User model for batch ${batchNumber} not found`);
+        continue;
+      }
+      const result = await UserModel.updateMany(
         { podSubmissionStatus: true },
         { $set: { podSubmissionStatus: false } }
       );
-      console.log(`POD submission status reset for batch ${batchNumber}`);
+      console.log(`POD submission status reset for batch ${batchNumber}. Matched: ${result.matchedCount}, Modified: ${result.modifiedCount}`);
     }
+    console.log("Cron job completed successfully");
   } catch (error) {
     console.error('Error resetting POD submission status:', error.message);
   }
