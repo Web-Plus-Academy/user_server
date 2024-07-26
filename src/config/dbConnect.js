@@ -14,7 +14,7 @@ const connectToMongoDB = async () => {
 
 
 // Schedule the cron job to run every minute for testing purposes
-cron.schedule('16 7 * * *', async () => {
+cron.schedule('30 7 * * *', async () => {
   console.log("Cron job started");
   try {
     const batchNumbers = [1, 2, 3]; // Replace with your actual batch numbers
