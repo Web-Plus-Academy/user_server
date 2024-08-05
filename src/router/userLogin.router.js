@@ -33,7 +33,7 @@ router.post('/problems', async (req, res) => {
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
-    res.json({data:response.data,podSubmissionStatus:user.podSubmissionStatus});
+    res.json({data:response.data,podSubmissionStatus:user.podSubmissionStatus, podCount:user.POD});
   } catch (error) {
     console.log(error);
     res.status(500).send('Error fetching problems');
