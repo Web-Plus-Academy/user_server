@@ -1,9 +1,54 @@
 import generateTokenSetCookie from "../utils/generateToken.js";
 import  getUserModelForBatch  from '../models/user.model.js'; // Adjust the path as per your project structure
-
-// ------------User Login---------- ✅
 import bcrypt from 'bcryptjs';
 
+// ------------User Signup---------- ✅
+export const signUpUser = async (req, res) => {
+    try {
+        const { username, password,batchnumber,email, name } = req.body;
+        // const batchnumber = parseInt(username.slice(4)); // Extracting batch number from username
+
+        // Get the model for the specified batch number
+        const UserModel = getUserModelForBatch(batchnumber);
+
+        // Check if the user already exists
+        const existingUser = await UserModel.findOne({ username });
+        if (existingUser) {
+            return res.status(400).json({ success: false, message: "Username already taken" });
+        }
+
+        // Hash the password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        // Create new user with full schema fields
+        const newUser = new UserModel({
+            username,
+            password: hashedPassword,
+            name,
+            batchnumber,
+            email,
+        });
+
+        await newUser.save();
+
+        // Generate token and set cookie
+        generateTokenSetCookie(newUser._id, batchnumber, res);
+
+        const time = getCurrentDateTime();
+        console.log({ message: "User Signed Up", time, name: newUser.name, ID: username });
+
+        res.status(201).json({ success: true, message: "User Registered Successfully", name: newUser.name, ID: newUser.username });
+
+    } catch (error) {
+        console.log("Error in signUpUser controller", error.message);
+        res.status(500).json({ success: false, error: 'Internal Server Error' });
+    }
+};
+
+
+
+// ------------User Login---------- ✅
 export const logInUser = async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -57,7 +102,6 @@ export const logOutUser = (req, res) => {
     } catch (error) {
         console.log("Error in Login controller", error.message);
         res.status(500).json({ error: "Internal Server error" })
-
     }
 }
 
