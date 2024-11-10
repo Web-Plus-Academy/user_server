@@ -1,12 +1,13 @@
 import express from 'express';
-import { logInUser, logOutUser, incrementPodCount, changePassword } from '../controller/userLogin.controller.js';
+import { logInUser, logOutUser, incrementPodCount, changePassword,signUpUser } from '../controller/userLogin.controller.js';
 // import UserProtectingRouter from '../middleware/user.middleware.js';
+import {getUserTasks,submitTask} from '../service/tasksubmission.js'
 import axios from 'axios'
 import getUserModelForBatch from '../models/user.model.js';
 
 const router = express.Router();
 
-// router.post('/signupUser', signUpUser);  // ✅
+router.post('/signupUser', signUpUser);  // ✅
 
 router.post('/loginUser', logInUser);  // ✅
 
@@ -15,6 +16,10 @@ router.post('/changePassword',changePassword);
 router.post('/logoutUser', logOutUser);  // ✅
 
 router.post('/podSubmit', incrementPodCount) //
+
+router.post('/tasks', getUserTasks);
+
+router.post('/Submittask', submitTask);
 
 
 
@@ -39,7 +44,6 @@ router.post('/problems', async (req, res) => {
     res.status(500).send('Error fetching problems');
   }
 });
-
 
 
 
