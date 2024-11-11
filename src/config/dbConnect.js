@@ -17,7 +17,7 @@ const connectToMongoDB = async () => {
 cron.schedule('0 0 * * *', async () => {
   console.log("Cron job started");
   try {
-    const batchNumbers = [1, 2, 3]; // Replace with your actual batch numbers
+    const batchNumbers = [1, 2, 3,4,5,6,7,8,9]; // Replace with your actual batch numbers
     for (const batchNumber of batchNumbers) {
       console.log(`Processing batch number: ${batchNumber}`);
       const UserModel = getUserModelForBatch(batchNumber);
