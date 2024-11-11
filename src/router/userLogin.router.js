@@ -1,7 +1,7 @@
 import express from 'express';
 import { logInUser, logOutUser, incrementPodCount, changePassword,signUpUser } from '../controller/userLogin.controller.js';
 // import UserProtectingRouter from '../middleware/user.middleware.js';
-import {getUserTasks,submitTask} from '../service/tasksubmission.js'
+import {getUserTasks,submitTask,getUserSemProj,submitSemProj} from '../service/tasksubmission.js'
 import axios from 'axios'
 import getUserModelForBatch from '../models/user.model.js';
 
@@ -20,6 +20,10 @@ router.post('/podSubmit', incrementPodCount) //
 router.post('/tasks', getUserTasks);
 
 router.post('/Submittask', submitTask);
+
+router.post('/getSemProj', getUserSemProj);
+
+router.post('/submitSemProj', submitSemProj);
 
 
 

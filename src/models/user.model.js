@@ -30,9 +30,14 @@ const ReportCardSchema = new mongoose.Schema({
 });
 
 const SemProjSchema = new mongoose.Schema({
-  sem: { type: Number, required: true  },
-  gitlink: { type: String, required: true },
-  livelink: { type: String, required: true },
+  sem: { type: Number, required: true },
+  isSubmitted: { type: Boolean, default: false },
+  credit: { type: Number, default: -1 },
+  link: { type: String, required: true },
+  allocDate: { type: Date, required: true },
+  endDate: { type: Date, required: true },
+  gitlink: { type: String, default: "" },
+  livelink: { type: String, default: "" }
 });
 
 
