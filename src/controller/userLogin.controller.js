@@ -1,6 +1,6 @@
 import generateTokenSetCookie from "../utils/generateToken.js";
 import  getUserModelForBatch  from '../models/user.model.js'; // Adjust the path as per your project structure
-import bcrypt from 'bcryptjs';
+// import bcrypt from 'bcryptjs';
 
 // ------------User Signup---------- ✅
 export const signUpUser = async (req, res) => {
@@ -17,14 +17,16 @@ export const signUpUser = async (req, res) => {
             return res.status(400).json({ success: false, message: "Username already taken" });
         }
 
+        /*
         // Hash the password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
+        */
 
         // Create new user with full schema fields
         const newUser = new UserModel({
             username,
-            password: hashedPassword,
+            password,
             name,
             batchnumber,
             email,
@@ -67,10 +69,16 @@ export const logInUser = async (req, res) => {
             return res.json({ success: false, message: "Invalid Username" });
         }
 
+        /*
         // Verify password
         const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
         if (!isPasswordCorrect) {
+            return res.json({ success: false, message: "Invalid Password" });
+        }
+            */
+
+        if (password != user.password) {
             return res.json({ success: false, message: "Invalid Password" });
         }
 
@@ -124,6 +132,7 @@ export const changePassword = async (req, res) => {
             return res.json({ success: false, message: "Invalid Username" });
         }
 
+        /*
         // Verify old password
         const isOldPasswordCorrect = await bcrypt.compare(oldPassword, user.password);
 
@@ -137,6 +146,16 @@ export const changePassword = async (req, res) => {
 
         // Update user's password
         user.password = hashedNewPassword;
+        await user.save();
+        */
+
+        // Verify old password
+        if (oldPassword !== user.password) {
+            return res.json({ success: false, message: "Invalid Old Password" });
+        }
+
+        // Update user's password
+        user.password = newPassword;
         await user.save();
 
         // Log success message
